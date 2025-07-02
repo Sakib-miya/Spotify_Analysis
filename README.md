@@ -1,50 +1,65 @@
 # 🎧 Spotify SQL Analysis Project
 
-![Spotify Banner](https://storage.googleapis.com/pr-newsroom-wp/1/2023/11/Spotify_Logo_RGB_Green.png)
+<p align="center">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" alt="Spotify Logo" width="120" />
+</p>
 
-## 📊 Overview
-
-This project explores a Spotify dataset using **SQL** to uncover insights about tracks, artists, albums, and performance metrics. The goal is to practice SQL skills with real-world music data — identifying popular tracks, analyzing trends, and applying advanced window functions.
-
-> 💡 This is an educational project built using pure SQL queries on a table named `spotify_project`.
+> 🧠 Explore insights from Spotify using powerful SQL queries.
 
 ---
 
-## 📁 Dataset
+## 📌 Overview
 
-The dataset includes information such as:
-- Track names
-- Artist and album details
-- Streams and views (Spotify & YouTube)
-- Likes, comments, and official video status
-- Audio features like **energy**, **danceability**, and **liveness**
+This project is a SQL-based deep-dive into a Spotify dataset containing track metadata, streaming stats, and audio features. It’s perfect for practicing SQL queries ranging from basic filtering to advanced window functions.
+
+The goal is to extract meaningful insights about tracks, artists, albums, and listener behavior using pure SQL.
 
 ---
 
-## ✅ SQL Tasks Covered
+## 🧾 Dataset Description
 
-- Filter tracks with > 1 billion streams  
-- Count total comments on licensed tracks  
-- Find all tracks from album type 'single'  
-- Count tracks per artist  
-- Calculate average danceability per album  
-- Identify top 5 high-energy tracks  
-- Compare Spotify streams vs. YouTube views  
-- Window functions: top 3 viewed tracks per artist  
-- Energy-to-liveness ratio and more...
+The table is named `spotify_project` and includes:
+
+- 🎵 Track & Artist Info  
+- 💿 Album type and name  
+- 📈 Spotify Streams & YouTube Views  
+- ❤️ Likes, 💬 Comments  
+- 🎧 Audio features: Energy, Danceability, Liveness  
+- 📹 Official video status  
+- ✅ Licensing information  
 
 ---
 
-## 🔍 Sample Queries
+## 🛠️ Key Features
+
+- Filter tracks with over 1 billion streams  
+- Compare Spotify and YouTube popularity  
+- Aggregate comments and likes  
+- Use subqueries and window functions  
+- Calculate energy-to-liveness ratios  
+- Rank top tracks by artist using `RANK()`  
+- Explore album-level averages and stats  
+
+---
+
+## 📚 Sample SQL Queries
 
 ```sql
--- Top 5 tracks with the highest energy
-SELECT Track, Energy 
+-- Get tracks with over 1 billion streams
+SELECT Track 
 FROM spotify_project 
-ORDER BY Energy DESC 
-LIMIT 5;
+WHERE Stream > 1000000000;
 
--- Average danceability for each album
+-- Average danceability per album
 SELECT Album, ROUND(AVG(Danceability), 3) AS avg_danceability 
 FROM spotify_project 
 GROUP BY Album;
+
+-- Top 3 viewed tracks per artist
+SELECT Artist, Track, Views
+FROM (
+  SELECT Artist, Track, Views,
+         RANK() OVER (PARTITION BY Artist ORDER BY Views DESC) AS rnk
+  FROM spotify_project
+) AS ranked
+WHERE rnk <= 3;
